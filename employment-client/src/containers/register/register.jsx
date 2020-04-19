@@ -8,12 +8,16 @@ import {
     Radio,
     Button
 } from 'antd-mobile'
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 
 import Logo from '../../components/logo/logo'
+import {register} from '../../redux/actions'
+
 
 const ListItem = List.Item
 
-export default class Register extends Component {
+class Register extends Component {
 
     state = {
         'username': '',
@@ -23,7 +27,7 @@ export default class Register extends Component {
     }
 
     register = () => {
-        console.log(this.state)
+        this.props.register(this.state)
     }
 
     handleChange = (name,val) => {
@@ -38,6 +42,11 @@ export default class Register extends Component {
 
     render() {
         const {type} = this.state
+        const {msg,redirectTo} = this.props.user
+        //if register success, return to home page
+        if(redirectTo) {
+            return <Redirect to={redirectTo}/>
+        }
 
         return(
             <div>
@@ -46,11 +55,12 @@ export default class Register extends Component {
                 <WingBlank>
                     <List>
                         <WhiteSpace />
-                        <InputItem onChange={val => {this.handleChange('username',val)}}>User Name:</InputItem>
+                        {msg ? <div className='error-message'>{msg}</div> : null}
+                        <InputItem placeholder='input user name' onChange={val => {this.handleChange('username',val)}}>User Name:</InputItem>
                         <WhiteSpace />
-                        <InputItem type='password' onChange={val => {this.handleChange('password',val)}}>Password:</InputItem>
+                        <InputItem type='password' placeholder='input password' onChange={val => {this.handleChange('password',val)}}>Password:</InputItem>
                         <WhiteSpace />
-                        <InputItem type='password' onChange={val => {this.handleChange('password2',val)}}>Conform:</InputItem>
+                        <InputItem type='password' placeholder='confirm password' onChange={val => {this.handleChange('password2',val)}}>Conform:</InputItem>
                         <WhiteSpace />
                         <ListItem>
                             <span>User Type:</span> &nbsp;&nbsp;&nbsp;
@@ -68,3 +78,8 @@ export default class Register extends Component {
         )
     }
 }
+
+export default connect(
+    state => ({user:state.user}),
+    {register}
+)(Register)

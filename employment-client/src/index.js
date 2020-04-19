@@ -8,8 +8,9 @@ import {Provider} from 'react-redux'
 import Main from "./containers/main/main";
 import Login from "./containers/login/login";
 import Register from "./containers/register/register";
-import store from "./utils/store";
+import store from "./redux/store";
 
+import './assets/css/index.css'
 
 ReactDOM.render((
         <Provider store={store}>

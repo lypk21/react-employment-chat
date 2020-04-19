@@ -19,9 +19,22 @@ const UserSchema = mongoose.Schema({
     salary: {type:String}
 })
 
+const ChatSchema = mongoose.Schema({
+    from: {type:String, require:true},
+    to: {type:String, require:true},
+    chat_id: {type:String, require:true},
+    content: {type:String, require:true},
+    read: {type:Boolean, default:false},
+    create_time: {type:Number}
+})
+
 const UserModel = mongoose.model('user',UserSchema)
+const ChatModel = mongoose.model('chat',ChatSchema)
+
 
 exports.UserModel = UserModel
+
+exports.ChatModel = ChatModel
 
 // module.exports = xxx    //export only one
 // exports.xxx = value  //export multiple items

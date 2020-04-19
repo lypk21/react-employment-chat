@@ -5,14 +5,15 @@ import {
     InputItem,
     WhiteSpace,
     WingBlank,
-    Radio,
     NavBar
 } from 'antd-mobile'
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 
+import {login} from '../../redux/actions'
 import Logo from "../../components/logo/logo";
 
-const ListItem = List.Item
-export default class Login extends Component {
+class Login extends Component {
     state = {
         username: '',
         password: '',
@@ -25,7 +26,7 @@ export default class Login extends Component {
     }
 
     login = () => {
-        console.log(this.state)
+        this.props.login(this.state)
     }
 
     toRegister = () => {
@@ -33,7 +34,11 @@ export default class Login extends Component {
     }
 
     render() {
-        const {type} = this.state
+        const {msg,redirectTo} = this.props.user
+        if(redirectTo) {
+            return <Redirect to={redirectTo} />
+        }
+
         return(
             <div>
                 <NavBar>Employment Recruitment Login</NavBar>
@@ -41,9 +46,10 @@ export default class Login extends Component {
                 <WingBlank>
                     <List>
                         <WhiteSpace />
-                        <InputItem onChange={val => this.handleChange('username',val)}>Usernam:</InputItem>
+                        {msg ? <div className='error-message'>{msg}</div> : null}
+                        <InputItem placeholder='input username' onChange={val => this.handleChange('username',val)}>Usernam:</InputItem>
                         <WhiteSpace />
-                        <InputItem onChange={val => this.handleChange('password',val)}>Password:</InputItem>
+                        <InputItem type='password'  placeholder='input password'  onChange={val => this.handleChange('password',val)}>Password:</InputItem>
                         <WhiteSpace />
                         <Button type="primary" onClick={this.login}>Login</Button>
                         <WhiteSpace />
@@ -54,3 +60,8 @@ export default class Login extends Component {
         )
     }
 }
+
+export default connect(
+    state => ({user:state.user}),
+    {login}
+)(Login)
