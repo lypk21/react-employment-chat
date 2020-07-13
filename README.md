@@ -10,7 +10,7 @@
    
    5) Adopt modularization, componentization and engineering mode development
    
-   6) basic functions: user register and login, user info and profile page, employers/employees list page,
+   6) basic pages: user register and login page, user info and profile page, employers/employees list page,
                        messages list page, chat page(using socketIO to implement live chat function)      
      
 
