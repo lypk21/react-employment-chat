@@ -59,7 +59,8 @@ class Message extends Component {
 
     render() {
         const {user} = this.props
-        const {users,chatMsgs} = this.props.chat  // users = [_id: {}]
+        // users = [_id: {}]
+        const {users,chatMsgs} = this.props.chat
 
         //get last msgs array
         const lastMsgs = this.getLastMsgs(chatMsgs,user._id)
@@ -95,6 +96,8 @@ class Message extends Component {
     }
 }
 
+//connect redux to get all login user relative chat messages. these chat messages are received once the user login.
+//handle these chat messages and filter out the last chat message and the target user
 export default connect(
     state => ({user:state.user,chat:state.chat})
 )(Message)

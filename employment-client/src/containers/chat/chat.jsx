@@ -11,9 +11,10 @@ class Chat extends Component {
 
     state = {
         content: '',
-        isEmotionShow: false
+        isEmotionShow: false //toggle emotion icons window
     }
 
+    //when click Send, call redux sendMsg action for create new chat message
     handleSend = () => {
         //prepare data
         const from = this.props.user._id
@@ -23,7 +24,7 @@ class Chat extends Component {
         //send data
         this.props.sendMsg({from,to,content})
 
-        //clear data
+        //clear data, hide emotion icons window
         this.setState({content: '', isEmotionShow: false})
 
     }
@@ -72,18 +73,24 @@ class Chat extends Component {
     }
 
     render() {
+        //when send chat message, the client socket will use 'sendMsg' port for sending chat data.
+        //after create chat data in server, the server side socket use 'receiveMsg' port to update client side props
+        //once props change, react will render page and show the latest chat message
         const {user} = this.props
         const {users,chatMsgs} = this.props.chat
+        //the targeted chat user
         const targetId = this.props.match.params.user_id
 
-        //due to asyn request, the first fresh page will get undefined object.
+        //due to asyn request, the first fresh page will get undefined object. return null until redux return data
         const meId = user._id
         if(!users[meId]) {
             return  null;
         }
 
         const chat_id = [meId,targetId].sort().join('_')
+        //only the chat messages between me and target user will show. each message identify by chat_id
         const msgs = chatMsgs.filter((msg) => chat_id === msg.chat_id)
+        // me avatar image path
         const avatar = users[targetId].avatar ? require(`../../assets/img/avatars/${users[targetId].avatar}.png`) : null
 
         return(

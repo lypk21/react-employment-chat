@@ -65,7 +65,7 @@ class Main extends Component {
     }
 
     render() {
-        //auto login function
+        //auto login function: when login user close the browser, and then return back, auto login function help user redirect to proper page without login again.
         /*
          1. cookies has user_id ?  yes but not login(redux has no user id), send ajax (componentDidMount) to get user
          2. no, redirect login page
@@ -75,13 +75,17 @@ class Main extends Component {
          */
 
         const user_id = Cookies.get('user_id')
+        //no user_id in Cookies, return to login page
         if(!user_id) return <Redirect to='/login' />
 
+        //get user and unreadCount Message from redux
         const {user,unreadCount} = this.props;
 
-
+        //if no user in redux, stop rendering, at the same time, componentDidMount will send getUser request to server to retrieve user into redux.
+        // when redux has user, continue the rendering
         if(!user) return null;
 
+        //if user already login and the input url is home page, need to redirect url according the user type and his avatar
         let path = this.props.location.pathname;
         if(path === '/') {
             const {type,avatar} = user
@@ -91,6 +95,7 @@ class Main extends Component {
 
         const {navList} = this
         const currentNav = navList.find(nav => (nav.path === path))
+        //hide is used for deciding which one of employer or employee page to show in the footer nav
         if(currentNav) {
             if(user.type === 'employer') navList[0].hide = true
             else navList[1].hide = true
@@ -99,7 +104,10 @@ class Main extends Component {
 
         return(
             <div>
-                {currentNav ? <NavBar className='sticky-header'>{currentNav.title}</NavBar> : null}
+                {
+                    //header component, show current page title
+                    currentNav ? <NavBar className='sticky-header'>{currentNav.title}</NavBar> : null
+                }
                 <Switch>
                     {
                         navList.map((nav,index) => (
@@ -112,12 +120,16 @@ class Main extends Component {
                     <Route component={NotFound} />
                 </Switch>
 
-                {currentNav ? <NavFooter unreadCount={unreadCount} navList={navList}></NavFooter> : null}
+                {
+                    //footer component, show nav lists.
+                    currentNav ? <NavFooter unreadCount={unreadCount} navList={navList}></NavFooter> : null
+                }
             </div>
         )
     }
 }
 
+// connect with redux getUser action to retrieve the login user status via Cookie user_id
 export default connect(
     state => ({user:state.user,unreadCount:state.chat.unreadCount}),
     {getUser}

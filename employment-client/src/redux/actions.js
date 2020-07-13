@@ -6,10 +6,10 @@ import {AUTH_SUCCESS,ERROR_MSG,RECEIVE_USER,RESET_USER,RECEIVE_USER_LIST,RECEIVE
 
 import io from 'socket.io-client'
 
-//success login and register auth action
+//after success login or register, get user from server
 const authSuccess = (user)=> ({type: AUTH_SUCCESS, data:user})
 
-//error message action
+//error message action, //when login or register error, return the initUser state and the error msg
 const errorMessage = (msg) => ({type:ERROR_MSG, data:msg})
 
 //syn actions
@@ -41,12 +41,12 @@ export const register = (user) => {
     }
 
     return async dispatch => {
-        //send register asyn request
+        //send register asyn request using axios api to server, create new user and return back the user data
         const response = await reqRegister({username,password,password2,type})
         const result = response.data
         if(result.code === 0) {
 
-            //once login, get msgList
+            //once register, get msgList
             getMsgList(dispatch,result.data._id)
 
             //dispatch success action
@@ -58,9 +58,11 @@ export const register = (user) => {
     }
 }
 
+//user login
 export const login = (user) => {
     const {username, password} = user
 
+    //validate username and password
     if(!username) {
         return errorMessage('username is required')
     }
@@ -69,10 +71,11 @@ export const login = (user) => {
     }
 
     return async dispatch => {
+        //call axios api to login and store user_id in Cookie
         const response = await reqLogin(user)
         const result = response.data
         if(result.code === 0) {
-            //once login, get msgList
+            //once login, get msgList of the login user
             getMsgList(dispatch,result.data._id)
 
             dispatch(authSuccess(result.data)) //result.data is user
@@ -82,6 +85,7 @@ export const login = (user) => {
     }
 }
 
+//for complete profile info page
 export const updateUser = (user) => {
     return async dispatch => {
         const response = await reqUpdate(user)
@@ -94,13 +98,14 @@ export const updateUser = (user) => {
     }
 }
 
-//auto login
+//auto login, retrieve login user status via Cookie user_id
 export const getUser = () => {
     return async  dispatch => {
+        //axios api to get login user status from server
         const response = await reqUser()
         const result = response.data
         if(result.code === 0) {
-            //once login, get msgList
+            //once auto login, get msgList
             getMsgList(dispatch,result.data._id)
 
             dispatch(receiveUser(result.data))
@@ -110,6 +115,7 @@ export const getUser = () => {
     }
 }
 
+//on the employer or employee page, they can choose which employees or employers to chat,show user list according the login user type.
 export const getUserList = (type) => {
 
     return async dispatch => {
@@ -121,7 +127,7 @@ export const getUserList = (type) => {
     }
 }
 
-//create a singleton instance for io
+//create a singleton instance for io, when user login, create io singleton, then use for chat page.
 function initIO(dispatch,user_id) {
     if(!io.socket) {
         io.socket = io('ws://localhost:4000')
@@ -140,7 +146,9 @@ function initIO(dispatch,user_id) {
 async  function getMsgList(dispatch,user_id) {
     //init socket once user login
     initIO(dispatch,user_id)
-
+    //once login, use api to get relative chat messages for login user, these messages including login user as sender or receivers
+    //the return data format: msglist {users,chatMsgs}
+    //these data are used for message list and chat page.
     const response = await reqMsgList()
     const result = response.data
     const {users,chatMsgs} = result.data
@@ -149,12 +157,17 @@ async  function getMsgList(dispatch,user_id) {
     }
 }
 
+// on the chat page, when click Send, using socket to create new chat message
 export const sendMsg = (({from,to,content}) => {
     return dispatch => {
+        //using socket to send chat data to 'sendMsg' event,
+        // on the server side,listen to 'sendMsg' event and create new chat data
+        // then the server will emit the 'receiveMsg' event
+        // lastly, the client side will listen to 'receiveMsg' event and update the new data
         io.socket.emit('sendMsg',{from,to,content})
     }
 })
-
+//on the chat page, after send chat message to server, the client will receive message to update its data status
 export const readMsgs = (from,to) => {
     return async  (dispatch) => {
         const response = await reqReadMsgs(from)

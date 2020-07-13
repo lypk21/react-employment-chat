@@ -19,6 +19,8 @@ class Employer extends Component {
     }
 }
 
+//connect with redux to get users list according to login user type, for example
+//if login user is employer, he/she can only see employees list, chose who to chat.
 export default connect(
     state => ({userList:state.userList}),
     {getUserList}

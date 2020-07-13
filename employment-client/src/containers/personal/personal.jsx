@@ -56,6 +56,7 @@ class Personal extends Component {
         )
     }
 }
+//for personal page, when click Logout,remove user_id from cookie and reset to init user status
 export default connect(
     state => ({user: state.user}),
     {resetUser}

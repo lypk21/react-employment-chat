@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {Card,WhiteSpace,WingBlank} from 'antd-mobile'
 import {withRouter} from 'react-router-dom'
 
-const Header = Card. Header
+const Header = Card.Header
 const Body = Card.Body
 
 class UserList extends Component {

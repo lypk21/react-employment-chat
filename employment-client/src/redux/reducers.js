@@ -1,7 +1,6 @@
 import {combineReducers} from 'redux'
 import {AUTH_SUCCESS,ERROR_MSG,RECEIVE_USER,RESET_USER,RECEIVE_USER_LIST,RECEIVE_MSG_LIST,RECEIVE_MSG,MSG_READ} from './action-types'
 import {getRedirectTo} from '../utils/index'
-import debugInfo from "less/lib/less/tree/debug-info";
 
 const initUser = {
     username:'',
@@ -15,10 +14,11 @@ const initUserList = []
 function user(state = initUser,action) {
     switch (action.type) {
         case AUTH_SUCCESS:
-            //overwrite state user by action.data
+            ////after success login or register, get user from server,overwrite state user,and add redirectTo attr
             const {type,avatar} = action.data
             return {...action.data,redirectTo: getRedirectTo(type,avatar)}
         case ERROR_MSG:
+            //when login or register error, return the initUser state and overwrite the error msg
             return {...state, msg:action.data}
         case RECEIVE_USER:
             return action.data

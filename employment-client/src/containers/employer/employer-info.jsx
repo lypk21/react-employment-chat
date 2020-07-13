@@ -51,6 +51,7 @@ class EmployerInfo extends Component {
     }
 }
 
+//for new user, when login, they need to update their profile, once choose avatar, next time login, will pass this part
 export default connect(
     state => ({user:state.user}),
     {updateUser}

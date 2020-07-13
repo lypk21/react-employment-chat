@@ -78,7 +78,12 @@ class Register extends Component {
         )
     }
 }
-
+// connect with redux register action,when click Register,pass data to register action.
+// inside register action: 1.validate input data.
+// 2.call axios api to create new user in server
+// 3.dispatch action type to reducers.
+// inside reducers, update the user status and return back to register page via store.
+// the register page will get latest user status via props
 export default connect(
     state => ({user:state.user}),
     {register}
