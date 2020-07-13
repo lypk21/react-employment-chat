@@ -42,10 +42,10 @@ the basic redux workflow:
 4) every action have action type(action-types.js),the action type will recognized by reducer(reducers),
 5) reducers update the status and return back by store to page props.
 
-4. how it work in the Server Side?
-employment-server/routes/index.js: define routes and manipulate mongoDB, as the business logic in server side are simple, didn't separate layers
-employment-server/socketIO/socket-server.js: handle socket requests    
+how it work in the Server Side?
+1) employment-server/routes/index.js: define routes and manipulate mongoDB, as the business logic in server side are simple, didn't separate layers
+2) employment-server/socketIO/socket-server.js: handle socket requests    
 
-5. the basic SocketIO workflow:
+the basic SocketIO workflow:
    when send chat message on the chat page, client socket will emit data via 'sendMsg' port, the serve socket liston this port and store new chat record 
    in mongoDB, then emit data to 'receiveMsg' port, the client socket listen this port and use redux to update the state and page props.
